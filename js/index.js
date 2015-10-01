@@ -1,65 +1,14 @@
-var Item = React.createClass({
-  handleClick: function(e) {
-    e.preventDefault();
-    this.props.removeItem(this.props.item.id);
-  },
-  render: function() {
-    return <li className="list-group-item" id={"item-" + this.props.item.id}>
-      {this.props.index + 1}. {this.props.item.text}
-      <div className="pull-right"><a href="#" onClick={this.handleClick}>X</a></div>
-    </li>;
-  }
-});
-
-var Sortable = React.createClass({
-  componentDidMount: function() { this.componentDidUpdate(); },
-  componentWillUnmount: function() { this.componentWillUpdate(); },
-
-  componentWillUpdate: function() {
-    $(this.getDOMNode()).sortable("destroy");
-  },
-
-  componentDidUpdate: function() {
-    var me = this;
-
-    var stop = function() {
-      var items = [];
-
-      // Формируем массив пересортированных элементов
-      _($(me.getDOMNode()).sortable("toArray")).each(function(item_id) {
-        var id = parseInt(item_id.replace(/^item-/, ""))
-        var nextItem = _(me.props.items).find(function(item) {
-          return item.id == id;
-        });
-        items.push(nextItem);
-      });
-
-      // Вызываем cancel, чтобы элементы местами поменял React.js
-      $(me.getDOMNode()).sortable("cancel");
-
-      // Вызываем колбек
-      me.props.onReorder(items);
-    };
-
-    // Подключаем jQuery UI Sortable
-    $(this.getDOMNode()).sortable({stop: stop});
-  },
-
-  render: function() {
-    var me = this;
-    var items = _(this.props.items).map(this.props.renderItem);
-    return <div>{items}</div>;
-  }
-});
+var SortItem = require('./components/SortItem');
+var SortList = require('./components/SortList');
 
 var List = React.createClass({
   render: function() {
     var me = this;
     var renderItem = function(item, index) {
-      return <Item item={item} index={index} removeItem={me.props.removeItem} />;
+      return <SortItem item={item} index={index} removeItem={me.props.removeItem} />;
     };
     return <ul className="list-group">
-      <Sortable
+      <SortList
         renderItem={renderItem}
         items={this.props.items}
         onReorder={this.props.onReorder}
