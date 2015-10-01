@@ -36,11 +36,15 @@ var SortList = React.createClass({
   },
 
   render: function() {
-    var me = this;
-    var items = this.props.items.map(function(item, index) {
-      return <SortItem key={index} item={item} index={index} />;
-    });
-    return <div>{items}</div>;
+    return (
+      <div>
+        {
+          this.props.items.map(function(item, index) {
+            return <SortItem key={index} item={item} index={index} />;
+          })
+        }
+      </div>
+    );
   }
 });
 
