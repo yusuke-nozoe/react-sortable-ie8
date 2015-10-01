@@ -14,7 +14,7 @@ var SortList = React.createClass({
     var stop = function() {
       var items = [];
 
-      // Формируем массив пересортированных элементов
+      // We form an array rearrange items
       _($(me.getDOMNode()).sortable("toArray")).each(function(item_id) {
         var id = parseInt(item_id.replace(/^item-/, ""))
         var nextItem = _(me.props.items).find(function(item) {
@@ -23,14 +23,14 @@ var SortList = React.createClass({
         items.push(nextItem);
       });
 
-      // Вызываем cancel, чтобы элементы местами поменял React.js
+      // Call cancel, the elements changed places React.js
       $(me.getDOMNode()).sortable("cancel");
 
-      // Вызываем колбек
+      // Call callback
       me.props.onReorder(items);
     };
 
-    // Подключаем jQuery UI Sortable
+    // Hook jQuery UI Sortable
     $(this.getDOMNode()).sortable({stop: stop});
   },
 

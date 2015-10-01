@@ -28,8 +28,8 @@ var App = React.createClass({
     return arr[Math.floor(Math.random()*arr.length)];
   },
   genItem: function() {
-    var actions = ["Добавить", "Порезать", "Вымыть", "Размельчить"];
-    var products = ["Картофель", "Лучок", "Колбасу", "Помидор"];
+    var actions = ["Add","Cut ","Clean ","Crush"];
+    var products = ["Potatoes","Onion","Sausage","Tomato"];
     return this.randomElem(actions) + " " + this.randomElem(products);
   },
   addItem: function(e) {
@@ -48,10 +48,12 @@ var App = React.createClass({
     this.setState({items: items});
   },
   render: function() {
-    var bonAppetit = <div><b>Приятного аппетита!</b></div>;
+    var bonAppetit = <div><b>Bon appetit!</b></div>;
     return <div>
       <List items={this.state.items} removeItem={this.removeItem} onReorder={this.onReorder} />
-      <div className="pull-right"><a href="#" onClick={this.addItem}>Добавить шаг</a></div>
+      <div className="pull-right">
+        <a href="#" onClick={this.addItem}>Add something</a>
+      </div>
       {this.state.items.length >= 2 ? bonAppetit : null}
     </div>;
   }
