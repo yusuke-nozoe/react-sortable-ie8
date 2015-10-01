@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Генератор вкусных рецептов - 2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.1.13/es5-sham.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.1.13/es5-shim.js'></script>
+  <script src='http://fb.me/react-0.12.1.js'></script>
+  <script src='http://fb.me/JSXTransformer-0.12.0.js'></script>
+  <script src='https://code.jquery.com/jquery-1.11.1.min.js'></script>
+  <script src='https://code.jquery.com/ui/1.11.2/jquery-ui.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js'></script>
+  <style>.list-group-item { cursor: move; }</style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6">
+        <h3>Генератор рецептов</h3>
+        <div id="recipe"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/jsx">
+    var Item = React.createClass({
+      handleClick: function(e) {
+        e.preventDefault();
+        this.props.removeItem(this.props.item.id);
+      },
+      render: function() {
+        return <li className="list-group-item" id={"item-" + this.props.item.id}>
+          {this.props.index + 1}. {this.props.item.text}
+          <div className="pull-right"><a href="#" onClick={this.handleClick}>X</a></div>
+        </li>;
+      }
+    });
+
+    var Sortable = React.createClass({
+      componentDidMount: function() { this.componentDidUpdate(); },
+      componentWillUnmount: function() { this.componentWillUpdate(); },
+
+      componentWillUpdate: function() {
+        $(this.getDOMNode()).sortable("destroy");
+      },
+
+      componentDidUpdate: function() {
+        var me = this;
+
+        var stop = function() {
+          var items = [];
+
+          // Формируем массив пересортированных элементов
+          _($(me.getDOMNode()).sortable("toArray")).each(function(item_id) {
+            var id = parseInt(item_id.replace(/^item-/, ""))
+            var nextItem = _(me.props.items).find(function(item) {
+              return item.id == id;
+            });
+            items.push(nextItem);
+          });
+
+          // Вызываем cancel, чтобы элементы местами поменял React.js
+          $(me.getDOMNode()).sortable("cancel");
+
+          // Вызываем колбек
+          me.props.onReorder(items);
+        };
+
+        // Подключаем jQuery UI Sortable
+        $(this.getDOMNode()).sortable({stop: stop});
+      },
+
+      render: function() {
+        var me = this;
+        var items = _(this.props.items).map(this.props.renderItem);
+        return <div>{items}</div>;
+      }
+    });
+
+    var List = React.createClass({
+      render: function() {
+        var me = this;
+        var renderItem = function(item, index) {
+          return <Item item={item} index={index} removeItem={me.props.removeItem} />;
+        };
+        return <ul className="list-group">
+          <Sortable
+            renderItem={renderItem}
+            items={this.props.items}
+            onReorder={this.props.onReorder}
+          />
+        </ul>;
+      }
+    });
+
+    var App = React.createClass({
+      getInitialState: function() {
+        return {
+          next_id: 1,
+          items: []
+        };
+      },
+      randomElem: function(arr) {
+        return arr[Math.floor(Math.random()*arr.length)];
+      },
+      genItem: function() {
+        var actions = ["Добавить", "Порезать", "Вымыть", "Размельчить"];
+        var products = ["Картофель", "Лучок", "Колбасу", "Помидор"];
+        return this.randomElem(actions) + " " + this.randomElem(products);
+      },
+      addItem: function(e) {
+        e.preventDefault();
+        var newItems = this.state.items.concat([{id: this.state.next_id, text: this.genItem()}]);
+        this.setState({items: newItems, next_id: this.state.next_id + 1});
+      },
+      removeItem: function(id) {
+        var pred = function(item) {
+          return item.id != id;
+        };
+        var newItems = this.state.items.filter(pred);
+        this.setState({items: newItems});
+      },
+      onReorder: function(items) {
+        this.setState({items: items});
+      },
+      render: function() {
+        var bonAppetit = <div><b>Приятного аппетита!</b></div>;
+        return <div>
+          <List items={this.state.items} removeItem={this.removeItem} onReorder={this.onReorder} />
+          <div className="pull-right"><a href="#" onClick={this.addItem}>Добавить шаг</a></div>
+          {this.state.items.length >= 2 ? bonAppetit : null}
+        </div>;
+      }
+    });
+
+    React.initializeTouchEvents(true);
+    React.render(<App />, document.getElementById('recipe'));
+  </script>
+</body>
+</html>
