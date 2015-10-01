@@ -1,0 +1,19 @@
+{
+  "name": "react-sortable-ie8",
+  "version": "0.0.0",
+  "authors": [
+    "Yusuke Nozoe <yusuke.nozoe@gmail.com>"
+  ],
+  "description": "React x jQuery UISortable working on IE8",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "console-polyfill": "~0.2.2"
+  }
+}
