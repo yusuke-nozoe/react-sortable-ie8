@@ -1,4 +1,5 @@
 var react = require('react');
+var SortItem = require('./SortItem');
 
 var SortList = React.createClass({
   componentDidMount: function() { this.componentDidUpdate(); },
@@ -36,7 +37,9 @@ var SortList = React.createClass({
 
   render: function() {
     var me = this;
-    var items = _(this.props.items).map(this.props.renderItem);
+    var items = this.props.items.map(function(item, index) {
+      return <SortItem key={index} item={item} index={index} />;
+    });
     return <div>{items}</div>;
   }
 });

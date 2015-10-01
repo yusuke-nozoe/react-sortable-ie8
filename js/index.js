@@ -1,61 +1,45 @@
-var SortItem = require('./components/SortItem');
 var SortList = require('./components/SortList');
 
-var List = React.createClass({
-  render: function() {
-    var me = this;
-    var renderItem = function(item, index) {
-      return <SortItem item={item} index={index} removeItem={me.props.removeItem} />;
-    };
-    return <ul className="list-group">
-      <SortList
-        renderItem={renderItem}
-        items={this.props.items}
-        onReorder={this.props.onReorder}
-      />
-    </ul>;
+var items = [
+  {
+    id: 1,
+    text: 'Item1'
+  },
+  {
+    id: 2,
+    text: 'Item2'
+  },
+  {
+    id: 3,
+    text: 'Item3'
+  },
+  {
+    id: 4,
+    text: 'Item4'
   }
-});
+];
 
 var App = React.createClass({
   getInitialState: function() {
     return {
       next_id: 1,
-      items: []
+      items: items
     };
-  },
-  randomElem: function(arr) {
-    return arr[Math.floor(Math.random()*arr.length)];
-  },
-  genItem: function() {
-    var actions = ["Add","Cut ","Clean ","Crush"];
-    var products = ["Potatoes","Onion","Sausage","Tomato"];
-    return this.randomElem(actions) + " " + this.randomElem(products);
-  },
-  addItem: function(e) {
-    e.preventDefault();
-    var newItems = this.state.items.concat([{id: this.state.next_id, text: this.genItem()}]);
-    this.setState({items: newItems, next_id: this.state.next_id + 1});
-  },
-  removeItem: function(id) {
-    var pred = function(item) {
-      return item.id != id;
-    };
-    var newItems = this.state.items.filter(pred);
-    this.setState({items: newItems});
   },
   onReorder: function(items) {
     this.setState({items: items});
   },
   render: function() {
-    var bonAppetit = <div><b>Bon appetit!</b></div>;
-    return <div>
-      <List items={this.state.items} removeItem={this.removeItem} onReorder={this.onReorder} />
-      <div className="pull-right">
-        <a href="#" onClick={this.addItem}>Add something</a>
+    return (
+      <div>
+        <ul className="list-group">
+          <SortList
+            items={this.state.items}
+            onReorder={this.onReorder}
+          />
+        </ul>
       </div>
-      {this.state.items.length >= 2 ? bonAppetit : null}
-    </div>;
+    );
   }
 });
 
